@@ -83,9 +83,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+/*
         setContentView(R.layout.activity_main);
-
         resultset = (TextView) findViewById(R.id.resultset);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -116,20 +115,23 @@ public class MainActivity extends AppCompatActivity {
 
         initialize();
         findPosition();
+*/
 
-        //setContentView(new CustomView(this));
+        setContentView(new CustomView(this));
     }
 
     protected void onPause() {
-        unregisterReceiver(wifiReceiver);
+        //unregisterReceiver(wifiReceiver);
         super.onPause();
     }
 
     protected void onResume() {
+        /*
         registerReceiver(
                 wifiReceiver,
                 new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)
         );
+        */
         super.onResume();
     }
 
@@ -307,7 +309,7 @@ public class MainActivity extends AppCompatActivity {
 
         Paint paint;
 
-        //private float MIN_ZOOM = 1f;
+        private float MIN_ZOOM = 1f;
 
         private float MAX_ZOOM = 5f;
 
@@ -316,6 +318,8 @@ public class MainActivity extends AppCompatActivity {
         private ScaleGestureDetector detector;
 
         private int mActivePointerId = INVALID_POINTER_ID;
+
+        private boolean flag = true;
 
         private float mLastTouchX = 0, mLastTouchY = 0, mPosX = 0, mPosY = 0;
 
@@ -329,6 +333,8 @@ public class MainActivity extends AppCompatActivity {
                     final int pointerIndex = MotionEventCompat.getActionIndex(event);
                     final float x = MotionEventCompat.getX(event, pointerIndex);
                     final float y = MotionEventCompat.getY(event, pointerIndex);
+
+                    flag = true;//for click listener
 
                     // Remember where we started (for dragging)
                     mLastTouchX = x;
@@ -345,6 +351,8 @@ public class MainActivity extends AppCompatActivity {
 
                     final float x = MotionEventCompat.getX(event, pointerIndex);
                     final float y = MotionEventCompat.getY(event, pointerIndex);
+
+                    flag = false;
 
                     // Only move if the ScaleGestureDetector isn't processing a gesture.
                     if (!detector.isInProgress()) {
@@ -365,6 +373,12 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 case MotionEvent.ACTION_UP: {
+
+                    if(flag){
+                        findNearesDestinationtNode((mLastTouchX+mPosX)/scaleFactor,
+                                (mLastTouchY+mPosX)/scaleFactor);
+                    }
+
                     mActivePointerId = INVALID_POINTER_ID;
                     break;
                 }
@@ -397,42 +411,22 @@ public class MainActivity extends AppCompatActivity {
         protected void onDraw(Canvas canvas) {
             super.onDraw(canvas);
 
-
-            //AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
-
             canvas.save();
             canvas.scale(scaleFactor, scaleFactor, -mPosX, -mPosY);
 
-            //XmlResourceParser parser = MainActivity.this.getResources().getXml(R.drawable.ic_layout_criotam_vector);
-
-            //Drawable drawable = VectorDrawable.createFromStream(
-              //      getContext().getResources().openRawResource(R.drawable.ic_layout_criotam_vector),
-                //    "ic_layout_criotam_vector");
-/*
-            VectorDrawableCompat mMyVectorDrawable =
-                    VectorDrawableCompat.create(getContext().getResources(), R.drawable.ic_layout_criotam_vector,
-                            getContext().getTheme());
-
-
-            //Log.d("dimensions", mMyVectorDrawable .getIntrinsicWidth()+":"+mMyVectorDrawable .getIntrinsicHeight());
-
-            mMyVectorDrawable.setBounds(0,0,
-                    mMyVectorDrawable .getIntrinsicWidth(),mMyVectorDrawable .getIntrinsicHeight());
-
-            mMyVectorDrawable .draw(canvas);
-*/
-            ;
             Drawable d = getResources().getDrawable(R.drawable.ic_layoutcriotam_vector);
             d.setBounds(0, 0, d.getIntrinsicWidth()*3, d.getIntrinsicHeight()*3);
             d.draw(canvas);
 
-            //drawable.draw(canvas);
+            Util.MAX_MAP_WIDTH = d.getIntrinsicWidth()*3;
+            Util.MAX_MAP_HEIGHT =  d.getIntrinsicHeight()*3;
+
 
             paint = new Paint();
             paint.setColor(Color.RED);
             paint.setStrokeWidth(10);
 
-            canvas.drawPoint(d.getMinimumWidth()*3,d.getMinimumHeight()*3, paint);
+            drawPoint(Util.MAX_MAP_WIDTH, Util.MAX_MAP_HEIGHT, paint, canvas);
 
             canvas.restore();
 
@@ -448,6 +442,64 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         }
+
+        public void drawPoint(double map_width, double map_height, Paint paint, Canvas canvas){
+
+            float point_x = (float) ((NodesCoordinates.node26[0]/NodesCoordinates.MAX_WIDTH)*(map_width));
+            float point_y = (float) (map_height - ((NodesCoordinates.node26[1]/NodesCoordinates.MAX_HEIGHT)*(map_height)));
+
+            canvas.drawCircle(point_x, point_y, 4, paint);
+
+        }
+
+
+        public void findRoute(){
+
+        }
+
+
+
+        public double[] node_distance = new double[34];
+
+        public void findNearesDestinationtNode(double dest_x, double dest_y){
+
+            double x_coordinate = (dest_x/Util.MAX_MAP_WIDTH)*NodesCoordinates.MAX_WIDTH;
+
+            double y_coordinate = ((Util.MAX_MAP_HEIGHT-dest_y)/Util.MAX_MAP_HEIGHT)*NodesCoordinates.MAX_HEIGHT;
+
+            Log.d("coordinates", x_coordinate+":"+y_coordinate);
+
+            for(int i = 0; i<=TrackerActivity.size; i++){
+                node_distance[i] = Math.sqrt(
+                        Math.pow(x_coordinate-NodesCoordinates.nodes[i][0],2)
+                        + Math.pow(y_coordinate - NodesCoordinates.nodes[i][1],2));
+            }
+
+            double min = Double.MAX_VALUE;
+
+            for(int i = 0; i<=TrackerActivity.size; i++){
+                if(node_distance[i]<min){
+                    min = node_distance[i];
+                    Util.destination_node = i;
+                }
+            }
+
+            Log.d("Nearest destination", ""+Util.destination_node+1);
+
+        }
+
+
+        /*
+        public void findRoom(double x, double y){
+
+            double x_coordinate = (x/Util.MAX_MAP_WIDTH)*NodesCoordinates.MAX_WIDTH;
+
+            double y_coordinate = ((Util.MAX_MAP_HEIGHT-y)/Util.MAX_MAP_HEIGHT)*NodesCoordinates.MAX_HEIGHT;
+
+            Log.d("coordinates", x_coordinate+":"+y_coordinate);
+
+        }*/
+
     }
 
 

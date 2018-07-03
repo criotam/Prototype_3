@@ -20,7 +20,7 @@ public class NodesCoordinates {
 
     public static double[] node11 = {2.62,1.96};
     public static double[] node12 = {2.62,2.49};
-    public static double[] node13 = {2.68,2.85};
+    public static double[] node13 = {2.68,2.92};
 
     public static double[] node14 = {2.37,3.57};
     public static double[] node15 = {2.37,4.10};
@@ -28,27 +28,31 @@ public class NodesCoordinates {
     public static double[] node17 = {2.37,5.16};
 
     public static double[] node18 = {2.33,5.75};
-    public static double[] node19 = {};
-    public static double[] node20 = {};
-    public static double[] node21 = {};
-    public static double[] node22 = {};
-    public static double[] node23 = {};
-    public static double[] node24 = {};
-    public static double[] node25 = {};
-    public static double[] node26 = {};
-    public static double[] node27 = {};
-    public static double[] node28 = {};
-    public static double[] node29 = {};
+    public static double[] node19 = {2.33,6.28};
+    public static double[] node20 = {2.33,6.81};
+    public static double[] node21 = {2.33,7.34};
+    public static double[] node22 = {2.33,7.87};
+
+    public static double[] node23 = {1.56,6.28};
+    public static double[] node24 = {1.03,6.28};
+    public static double[] node25 = {0.5,6.28};
+
+    public static double[] node26 = {1.8,8.40};
+    public static double[] node27 = {1.27,8.40};
+    public static double[] node28 = {0.74,8.40};
+    public static double[] node29 = {0.21,8.40};
 
     public static double[] node30 = {1.508,2.92};
     public static double[] node31 = {1.508,2.27};
     public static double[] node32 = {1.508,1.74};
     public static double[] node33 = {1.508,1.21};
 
+    public static double[] node34 = {2.33,8.40};//Missed node
+
     public static double[][] nodes = {
             node1, node2, node3, node4, node5, node6, node7, node8, node9, node10, node11, node12, node13, node14, node15, node16,
             node17, node18, node19, node20, node21, node22, node23, node24, node25, node26, node27, node28, node29, node30,
-            node31, node32, node33
+            node31, node32, node33, node34
     };
     public NodesCoordinates(double map_width, double map_height) {
 
