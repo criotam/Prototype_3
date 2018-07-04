@@ -63,18 +63,18 @@ public class RouteActivity {
                  vertexIndex < nVertices;
                  vertexIndex++)
             {
-                Log.d("vertex node", i+":"+vertexIndex);
+                //Log.d("vertex node", i+":"+vertexIndex);
                 if (!added[vertexIndex] &&
                         shortestDistances[vertexIndex] <
                                 shortestDistance)
                 {
-                    Log.d("matched vertex node", i+":"+vertexIndex);
+                    //Log.d("matched vertex node", i+":"+vertexIndex);
                     nearestVertex = vertexIndex;
                     shortestDistance = shortestDistances[vertexIndex];
                 }
             }
 
-            Log.d("index", (nearestVertex+1)+"");
+            //Log.d("index", (nearestVertex+1)+"");
             // Mark the picked vertex as
             // processed
             added[nearestVertex] = true;

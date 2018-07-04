@@ -26,6 +26,6 @@ public class Util {
 
     public static double[] nearest_destination_node = new double[2];
 
-    public static int[] path_nodes = new int[34];
+    public static int[] path_nodes = new int[33];
 
 }
