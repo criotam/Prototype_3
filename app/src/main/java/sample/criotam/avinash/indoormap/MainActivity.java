@@ -25,12 +25,14 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 //import com.devs.vectorchildfinder.VectorChildFinder;
 
 import org.w3c.dom.Node;
 
 import java.io.InputStream;
+import java.io.UTFDataFormatException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -392,7 +394,15 @@ public class MainActivity extends AppCompatActivity {
 
                         Util.y_destination_coordinate = y_coordinate;
 
-                        findNearesDestinationtNode(x_coordinate, y_coordinate);
+                        //out of bound
+                        if(((mLastTouchX/scaleFactor)+mPosX)>Util.MAX_MAP_WIDTH &&
+                                ((mLastTouchY/scaleFactor)+mPosY)> Util.MAX_MAP_HEIGHT){
+                            Toast.makeText(MainActivity.this, "invalid position", Toast.LENGTH_SHORT).show();
+                        }
+
+                        if(checkifValid(x_coordinate, y_coordinate)) {
+                            findNearesDestinationtNode(x_coordinate, y_coordinate);
+                        }
                     }
 
                     mActivePointerId = INVALID_POINTER_ID;
@@ -590,8 +600,24 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        public void checkifValid(){
+        public boolean checkifValid(double dest_x, double dest_y){
 
+            float coordinate_x = (float) dest_x;
+
+            float coordinate_y = (float) dest_y;
+
+            //cupboard
+            if(coordinate_x > 4.07 && coordinate_x<4.608 && coordinate_y > 1.02 && coordinate_y < 2.62){
+                Toast.makeText(MainActivity.this, "Can't move to cupboard", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            if(coordinate_x > 2.278 && coordinate_x < 4.608 && coordinate_y > 2.62 && coordinate_y <2.92){
+                Toast.makeText(MainActivity.this, "Can't move to wall", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            return true;
         }
 
     }
