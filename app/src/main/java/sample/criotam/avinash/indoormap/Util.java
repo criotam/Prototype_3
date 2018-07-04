@@ -10,7 +10,9 @@ public class Util {
 
     public static double y_source = 0.0;
 
-    public static int source_node;
+    public static int source_node = 1;
+
+    public static int source_key_node;
 
     public static double x_destination = 0.0;
 
@@ -18,17 +20,12 @@ public class Util {
 
     public static int destination_node;
 
+    public static int destination_key_node;
+
     public static double[] nearest_source_node = new double[2];
 
     public static double[] nearest_destination_node = new double[2];
 
-    public static double[][] room1_dimen = {};
-
-    public static double[][] room2_dimen = {};
-
-    public static double[][] hall_dimen = {};
-
-    public static double[][] kitchen_dimen = {};
-
+    public static int[] path_nodes = new int[34];
 
 }

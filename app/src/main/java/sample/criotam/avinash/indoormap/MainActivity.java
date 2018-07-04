@@ -313,7 +313,7 @@ public class MainActivity extends AppCompatActivity {
 
         private float MAX_ZOOM = 5f;
 
-        private float scaleFactor = 1.f;
+        private float scaleFactor = 1f;
 
         private ScaleGestureDetector detector;
 
@@ -375,8 +375,13 @@ public class MainActivity extends AppCompatActivity {
                 case MotionEvent.ACTION_UP: {
 
                     if(flag){
-                        findNearesDestinationtNode((mLastTouchX+mPosX)/scaleFactor,
-                                (mLastTouchY+mPosX)/scaleFactor);
+
+                        double x_coordinate = (((mLastTouchX/scaleFactor)+mPosX)/Util.MAX_MAP_WIDTH)*NodesCoordinates.MAX_WIDTH;
+
+                        double y_coordinate = ((Util.MAX_MAP_HEIGHT-((mLastTouchY/scaleFactor)+mPosY))/Util.MAX_MAP_HEIGHT)
+                        *NodesCoordinates.MAX_HEIGHT;
+
+                        findKeyNode(x_coordinate, y_coordinate);
                     }
 
                     mActivePointerId = INVALID_POINTER_ID;
@@ -412,7 +417,7 @@ public class MainActivity extends AppCompatActivity {
             super.onDraw(canvas);
 
             canvas.save();
-            canvas.scale(scaleFactor, scaleFactor, -mPosX, -mPosY);
+            canvas.scale(scaleFactor, scaleFactor/*, -mPosX, -mPosY*/);
 
             Drawable d = getResources().getDrawable(R.drawable.ic_layoutcriotam_vector);
             d.setBounds(0, 0, d.getIntrinsicWidth()*3, d.getIntrinsicHeight()*3);
@@ -458,37 +463,78 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+        public void getSourceNode(){
+
+        }
+
 
         public double[] node_distance = new double[34];
 
+        /*
         public void findNearesDestinationtNode(double dest_x, double dest_y){
 
             double x_coordinate = (dest_x/Util.MAX_MAP_WIDTH)*NodesCoordinates.MAX_WIDTH;
 
             double y_coordinate = ((Util.MAX_MAP_HEIGHT-dest_y)/Util.MAX_MAP_HEIGHT)*NodesCoordinates.MAX_HEIGHT;
 
+            Util.x_destination = x_coordinate;
+
+            Util.y_destination = y_coordinate;
+
             Log.d("coordinates", x_coordinate+":"+y_coordinate);
+
+            double min = Double.MAX_VALUE;
 
             for(int i = 0; i<=TrackerActivity.size; i++){
                 node_distance[i] = Math.sqrt(
                         Math.pow(x_coordinate-NodesCoordinates.nodes[i][0],2)
                         + Math.pow(y_coordinate - NodesCoordinates.nodes[i][1],2));
-            }
 
-            double min = Double.MAX_VALUE;
-
-            for(int i = 0; i<=TrackerActivity.size; i++){
                 if(node_distance[i]<min){
                     min = node_distance[i];
                     Util.destination_node = i;
                 }
             }
 
-            Log.d("Nearest destination", ""+Util.destination_node+1);
+            Log.d("Nearest destination", ""+(Util.destination_node+1));
+
+        }
+*/
+
+        public void checkifValid(){
 
         }
 
 
+        public int findKeyNode(double x_source_coordinate, double y_source_coordinate){
+
+            double min = Double.MAX_VALUE;
+
+            int node = 0;
+
+            for(int i = 0; i<=TrackerActivity.size; i++){
+                node_distance[i] = Math.sqrt(
+                        Math.pow(x_source_coordinate-NodesCoordinates.nodes[i][0],2)
+                                + Math.pow(y_source_coordinate - NodesCoordinates.nodes[i][1],2));
+
+                if(node_distance[i]<min){
+                    min = node_distance[i];
+                    node = i;
+                }
+            }
+
+            Log.d("node", (node+1)+"");
+
+            if(node == 13 || node == 14 || node == 18 || node == 30 || node == 19 || node == 34){
+                Log.d("Key node found", (node+1)+"");
+                return (node+1);
+            }else{
+                findKeyNode(NodesCoordinates.nodes[node][0], NodesCoordinates.nodes[node][1]);
+            }
+
+            return -1;
+
+        }
         /*
         public void findRoom(double x, double y){
 
