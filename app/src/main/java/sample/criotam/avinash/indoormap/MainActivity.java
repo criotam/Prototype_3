@@ -381,7 +381,7 @@ public class MainActivity extends AppCompatActivity {
                         double y_coordinate = ((Util.MAX_MAP_HEIGHT-((mLastTouchY/scaleFactor)+mPosY))/Util.MAX_MAP_HEIGHT)
                         *NodesCoordinates.MAX_HEIGHT;
 
-                        findKeyNode(x_coordinate, y_coordinate);
+                        //findKeyNode(x_coordinate, y_coordinate);
                     }
 
                     mActivePointerId = INVALID_POINTER_ID;
@@ -435,6 +435,8 @@ public class MainActivity extends AppCompatActivity {
 
             canvas.restore();
 
+            findRoute();
+
         }
 
         private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
@@ -459,7 +461,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         public void findRoute(){
-
+            RouteActivity.dijkstra(NodesCoordinates.graph,1);
         }
 
 

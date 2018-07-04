@@ -1,58 +1,145 @@
 package sample.criotam.avinash.indoormap;
 
+import android.util.Log;
+
 public class RouteActivity {
 
-    static final int V=TrackerActivity.size+1;
-    int minDistance(int dist[], Boolean sptSet[])
-    {
-        int min = Integer.MAX_VALUE, min_index=-1;
+    private static final int NO_PARENT = -1;
 
-        for (int v = 0; v < V; v++)
-            if (sptSet[v] == false && dist[v] <= min)
+    // Function that implements Dijkstra's
+    // single source shortest path
+    // algorithm for a graph represented
+    // using adjacency matrix
+    // representation
+    public static void dijkstra(double[][] adjacencyMatrix,
+                                 int startVertex)
+    {
+        int nVertices = adjacencyMatrix[0].length;
+
+        Log.d("nVertices", ""+nVertices);
+        // shortestDistances[i] will hold the
+        // shortest distance from src to i
+        double[] shortestDistances = new double[nVertices];
+
+        // added[i] will true if vertex i is
+        // included / in shortest path tree
+        // or shortest distance from src to
+        // i is finalized
+        boolean[] added = new boolean[nVertices];
+
+        // Initialize all distances as
+        // INFINITE and added[] as false
+        for (int vertexIndex = 0; vertexIndex < nVertices;
+             vertexIndex++)
+        {
+            shortestDistances[vertexIndex] = Integer.MAX_VALUE;
+            added[vertexIndex] = false;
+        }
+
+        // Distance of source vertex from
+        // itself is always 0
+        shortestDistances[startVertex] = 0;
+
+        // Parent array to store shortest
+        // path tree
+        int[] parents = new int[nVertices];
+
+        // The starting vertex does not
+        // have a parent
+        parents[startVertex] = NO_PARENT;
+
+        // Find shortest path for all
+        // vertices
+        for (int i = 1; i < nVertices; i++)
+        {
+
+            // Pick the minimum distance vertex
+            // from the set of vertices not yet
+            // processed. nearestVertex is
+            // always equal to startNode in
+            // first iteration.
+            int nearestVertex = -1;
+            double shortestDistance = Integer.MAX_VALUE;
+            for (int vertexIndex = 0;
+                 vertexIndex < nVertices;
+                 vertexIndex++)
             {
-                min = dist[v];
-                min_index = v;
+                if (!added[vertexIndex] &&
+                        shortestDistances[vertexIndex] <
+                                shortestDistance)
+                {
+                    nearestVertex = vertexIndex;
+                    shortestDistance = shortestDistances[vertexIndex];
+                }
             }
 
-        return min_index;
-    }
+            // Mark the picked vertex as
+            // processed
+            Log.d("index", nearestVertex +"");
+            added[nearestVertex] = true;
 
-    void printSolution(int dist[], int n)
-    {
-        System.out.println("Vertex   Distance from Source");
-        for (int i = 0; i < V; i++)
-            System.out.println(i+" tt "+dist[i]);
-    }
+            // Update dist value of the
+            // adjacent vertices of the
+            // picked vertex.
+            for (int vertexIndex = 0;
+                 vertexIndex < nVertices;
+                 vertexIndex++)
+            {
+                double edgeDistance = adjacencyMatrix[nearestVertex][vertexIndex];
 
-    void dijkstra(int graph[][], int src)
-    {
-        int dist[] = new int[V];
-
-        Boolean sptSet[] = new Boolean[V];
-
-        for (int i = 0; i < V; i++)
-        {
-            dist[i] = Integer.MAX_VALUE;
-            sptSet[i] = false;
+                if (edgeDistance > 0
+                        && ((shortestDistance + edgeDistance) <
+                        shortestDistances[vertexIndex]))
+                {
+                    parents[vertexIndex] = nearestVertex;
+                    shortestDistances[vertexIndex] = shortestDistance +
+                            edgeDistance;
+                }
+            }
         }
 
-        dist[src] = 0;
+        printSolution(startVertex, shortestDistances, parents);
+    }
 
-        for (int count = 0; count < V-1; count++)
+    // A utility function to print
+    // the constructed distances
+    // array and shortest paths
+    private static void printSolution(int startVertex,
+                                      double[] distances,
+                                      int[] parents)
+    {
+        int nVertices = distances.length;
+        System.out.print("Vertex\t Distance\tPath");
+
+        for (int vertexIndex = 0;
+             vertexIndex < nVertices;
+             vertexIndex++)
         {
-            int u = minDistance(dist, sptSet);
-
-            sptSet[u] = true;
-
-            for (int v = 0; v < V; v++)
-
-                if (!sptSet[v] && graph[u][v]!=0 &&
-                        dist[u] != Integer.MAX_VALUE &&
-                        dist[u]+graph[u][v] < dist[v])
-                    dist[v] = dist[u] + graph[u][v];
+            if (vertexIndex != startVertex)
+            {
+                System.out.print("\n" + startVertex + " -> ");
+                System.out.print(vertexIndex + " \t\t ");
+                System.out.print(distances[vertexIndex] + "\t\t");
+                printPath(vertexIndex, parents);
+            }
         }
+    }
 
-        printSolution(dist, V);
+    // Function to print shortest path
+    // from source to currentVertex
+    // using parents array
+    public static void printPath(int currentVertex,
+                                  int[] parents)
+    {
+
+        // Base case : Source node has
+        // been processed
+        if (currentVertex == NO_PARENT)
+        {
+            return;
+        }
+        printPath(parents[currentVertex], parents);
+        System.out.print(currentVertex + " ");
     }
 
 }
