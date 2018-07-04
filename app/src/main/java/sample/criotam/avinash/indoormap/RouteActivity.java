@@ -4,6 +4,8 @@ import android.util.Log;
 
 public class RouteActivity {
 
+    private static int path_index = 0;
+
     private static final int NO_PARENT = -1;
 
     // Function that implements Dijkstra's
@@ -16,6 +18,7 @@ public class RouteActivity {
     {
         int nVertices = adjacencyMatrix[0].length;
 
+        path_index = 0;
         // shortestDistances[i] will hold the
         // shortest distance from src to i
         int[] shortestDistances = new int[nVertices];
@@ -121,7 +124,9 @@ public class RouteActivity {
                 System.out.print("\n" + startVertex + " -> ");
                 System.out.print(vertexIndex + " \t\t ");
                 System.out.print(distances[vertexIndex] + "\t\t");
+                NodesCoordinates.path_array[path_index] = "";
                 printPath(vertexIndex, parents);
+                path_index++;
             }
         }
     }
@@ -140,6 +145,8 @@ public class RouteActivity {
             return;
         }
         printPath(parents[currentVertex], parents);
+
+        NodesCoordinates.path_array[path_index] += (currentVertex) + ":";
         System.out.print(currentVertex + " ");
     }
 }

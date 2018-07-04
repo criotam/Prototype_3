@@ -103,5 +103,10 @@ public class NodesCoordinates {
             {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,5,4,3,2,1,0,0,0,1,2,3,4,0,0,0,0,0}
     };
 
+    public static int[][] new_graph = new int[34][34];
+
     public static String[] path_array = new String[34];
+
+    public static int path_index = -1;
+
 }
