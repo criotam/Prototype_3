@@ -11,15 +11,14 @@ public class RouteActivity {
     // algorithm for a graph represented
     // using adjacency matrix
     // representation
-    public static void dijkstra(double[][] adjacencyMatrix,
-                                 int startVertex)
+    public static void dijkstra(int[][] adjacencyMatrix,
+                                int startVertex)
     {
         int nVertices = adjacencyMatrix[0].length;
 
-        Log.d("nVertices", ""+nVertices);
         // shortestDistances[i] will hold the
         // shortest distance from src to i
-        double[] shortestDistances = new double[nVertices];
+        int[] shortestDistances = new int[nVertices];
 
         // added[i] will true if vertex i is
         // included / in shortest path tree
@@ -59,23 +58,25 @@ public class RouteActivity {
             // always equal to startNode in
             // first iteration.
             int nearestVertex = -1;
-            double shortestDistance = Integer.MAX_VALUE;
+            int shortestDistance = Integer.MAX_VALUE;
             for (int vertexIndex = 0;
                  vertexIndex < nVertices;
                  vertexIndex++)
             {
+                Log.d("vertex node", i+":"+vertexIndex);
                 if (!added[vertexIndex] &&
                         shortestDistances[vertexIndex] <
                                 shortestDistance)
                 {
+                    Log.d("matched vertex node", i+":"+vertexIndex);
                     nearestVertex = vertexIndex;
                     shortestDistance = shortestDistances[vertexIndex];
                 }
             }
 
+            Log.d("index", (nearestVertex+1)+"");
             // Mark the picked vertex as
             // processed
-            Log.d("index", nearestVertex +"");
             added[nearestVertex] = true;
 
             // Update dist value of the
@@ -85,7 +86,7 @@ public class RouteActivity {
                  vertexIndex < nVertices;
                  vertexIndex++)
             {
-                double edgeDistance = adjacencyMatrix[nearestVertex][vertexIndex];
+                int edgeDistance = adjacencyMatrix[nearestVertex][vertexIndex];
 
                 if (edgeDistance > 0
                         && ((shortestDistance + edgeDistance) <
@@ -105,7 +106,7 @@ public class RouteActivity {
     // the constructed distances
     // array and shortest paths
     private static void printSolution(int startVertex,
-                                      double[] distances,
+                                      int[] distances,
                                       int[] parents)
     {
         int nVertices = distances.length;
@@ -128,7 +129,7 @@ public class RouteActivity {
     // Function to print shortest path
     // from source to currentVertex
     // using parents array
-    public static void printPath(int currentVertex,
+    private static void printPath(int currentVertex,
                                   int[] parents)
     {
 
@@ -141,5 +142,4 @@ public class RouteActivity {
         printPath(parents[currentVertex], parents);
         System.out.print(currentVertex + " ");
     }
-
 }

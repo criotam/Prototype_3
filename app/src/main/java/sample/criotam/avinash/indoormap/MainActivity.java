@@ -461,7 +461,15 @@ public class MainActivity extends AppCompatActivity {
 
 
         public void findRoute(){
-            RouteActivity.dijkstra(NodesCoordinates.graph,1);
+
+            int[][] new_graph = new int[34][34];
+
+            for(int i= 0; i<34; i++){
+                for(int j = 0; j<34; j++){
+                    new_graph[i][j] = (int) (NodesCoordinates.graph[i][j]*100);
+                }
+            }
+            RouteActivity.dijkstra(new_graph,0);
         }
 
 
