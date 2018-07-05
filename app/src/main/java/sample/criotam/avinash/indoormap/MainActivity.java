@@ -386,14 +386,6 @@ public class MainActivity extends AppCompatActivity {
                         double y_coordinate = ((Util.MAX_MAP_HEIGHT-((mLastTouchY/scaleFactor)+mPosY))/Util.MAX_MAP_HEIGHT)
                         *NodesCoordinates.MAX_HEIGHT;
 
-                        Util.x_destination_screen = ((mLastTouchX/scaleFactor)+mPosX);
-
-                        Util.y_destination_screen = ((mLastTouchY/scaleFactor)+mPosY);
-
-                        Util.x_destination_coordinate = x_coordinate;
-
-                        Util.y_destination_coordinate = y_coordinate;
-
                         //out of bound
                         if(((mLastTouchX/scaleFactor)+mPosX)>Util.MAX_MAP_WIDTH &&
                                 ((mLastTouchY/scaleFactor)+mPosY)> Util.MAX_MAP_HEIGHT){
@@ -401,6 +393,15 @@ public class MainActivity extends AppCompatActivity {
                         }
 
                         if(checkifValid(x_coordinate, y_coordinate)) {
+
+                            Util.x_destination_screen = ((mLastTouchX/scaleFactor)+mPosX);
+
+                            Util.y_destination_screen = ((mLastTouchY/scaleFactor)+mPosY);
+
+                            Util.x_destination_coordinate = x_coordinate;
+
+                            Util.y_destination_coordinate = y_coordinate;
+
                             findNearesDestinationtNode(x_coordinate, y_coordinate);
                         }
                     }
@@ -441,11 +442,11 @@ public class MainActivity extends AppCompatActivity {
             canvas.scale(scaleFactor, scaleFactor/*, -mPosX, -mPosY*/);
 
             Drawable d = getResources().getDrawable(R.drawable.ic_layoutcriotam_vector);
-            d.setBounds(0, 0, d.getIntrinsicWidth()*3, d.getIntrinsicHeight()*3);
+            d.setBounds(0, 0, d.getIntrinsicWidth()*5, d.getIntrinsicHeight()*5);
             d.draw(canvas);
 
-            Util.MAX_MAP_WIDTH = d.getIntrinsicWidth()*3;
-            Util.MAX_MAP_HEIGHT =  d.getIntrinsicHeight()*3;
+            Util.MAX_MAP_WIDTH = d.getIntrinsicWidth()*5;
+            Util.MAX_MAP_HEIGHT =  d.getIntrinsicHeight()*5;
 
 
             paint = new Paint();
@@ -454,7 +455,9 @@ public class MainActivity extends AppCompatActivity {
 
             //drawPoint(Util.MAX_MAP_WIDTH, Util.MAX_MAP_HEIGHT, paint, canvas);
 
-            drawPath(NodesCoordinates.path_index, canvas, paint);//draw path from source to destination
+            //if(checkifValid(Util.x_destination_coordinate, Util.y_destination_coordinate)) {
+                drawPath(NodesCoordinates.path_index, canvas, paint);//draw path from source to destination
+            //}
 
             canvas.restore();
 
@@ -612,8 +615,65 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
 
+            //wall
             if(coordinate_x > 2.278 && coordinate_x < 4.608 && coordinate_y > 2.62 && coordinate_y <2.92){
                 Toast.makeText(MainActivity.this, "Can't move to wall", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+
+            if(coordinate_x > 1.96 && coordinate_x < 2.07 && coordinate_y > 0 && coordinate_y<2.62){
+                Toast.makeText(MainActivity.this, "Can't move to wall", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            if(coordinate_x > 1.898 && coordinate_x < 2.278 && coordinate_y > 2.62 && coordinate_y<2.92){
+                Toast.makeText(MainActivity.this, "Can't move to wall", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            if(coordinate_x > 0 && coordinate_x < 1.118 && coordinate_y > 2.62 && coordinate_y<2.92){
+                Toast.makeText(MainActivity.this, "Can't move to wall", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            if(coordinate_x > 0 && coordinate_x < 1.96 && coordinate_y > 0 && coordinate_y<0.62){
+                Toast.makeText(MainActivity.this, "Can't move to table", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            if(coordinate_x > 0 && coordinate_x < 0.62 && coordinate_y > 0 && coordinate_y<2.62){
+                Toast.makeText(MainActivity.this, "Can't move to table", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            if(coordinate_x > 2.6 && coordinate_x < 4.608 && coordinate_y > 3.51 && coordinate_y<5.31){
+                Toast.makeText(MainActivity.this, "Can't move to table", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            if(coordinate_x > 0 && coordinate_x < 1.93 && coordinate_y > 3.42 && coordinate_y < 5.22){
+                Toast.makeText(MainActivity.this, "Can't move to table", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            if(coordinate_x > 0 && coordinate_x < 1.94 && coordinate_y > 5.66 && coordinate_y < 5.96){
+                Toast.makeText(MainActivity.this, "Can't move to table", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            if(coordinate_x > 2.72 && coordinate_x < 2.928 && coordinate_y > 5.75 && coordinate_y < 6.75){
+                Toast.makeText(MainActivity.this, "Can't move to wall", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            if(coordinate_x > 0 && coordinate_x < 2 && coordinate_y > 6.412 && coordinate_y < 8.192){
+                Toast.makeText(MainActivity.this, "Can't move to table", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            if(coordinate_x > 2.82 && coordinate_y > 5.75 ){
+                Toast.makeText(MainActivity.this, "Can't move to empty area", Toast.LENGTH_SHORT).show();
                 return false;
             }
 
