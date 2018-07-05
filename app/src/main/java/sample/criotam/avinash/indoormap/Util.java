@@ -10,11 +10,21 @@ public class Util {
 
     public static double y_source_coordinate = 0.0;
 
+    public static double x_current_coordinate = 0.0;
+
+    public static double y_current_coordinate = 0.0;
+
+    public static double x_current_screen = 0.0;
+
+    public static double y_current_screen = 0.0;
+
     public static double x_source_screen = 0.0;
 
     public static double y_source_screen = 0.0;
 
-    public static int source_node = 1;
+    public static int source_node = 12;
+
+    public static float rotation_angle = 0;
 
     public static int source_key_node;
 

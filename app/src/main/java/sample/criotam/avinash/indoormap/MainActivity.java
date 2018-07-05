@@ -5,8 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.XmlResourceParser;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.VectorDrawable;
@@ -441,6 +444,8 @@ public class MainActivity extends AppCompatActivity {
             canvas.save();
             //canvas.scale(scaleFactor, scaleFactor/*, -mPosX, -mPosY*/);
 
+
+            //displaying criotam graph
             Drawable d = getResources().getDrawable(R.drawable.ic_layoutcriotam_vector);
 
             Util.MAX_MAP_WIDTH = d.getIntrinsicWidth()*1;
@@ -450,15 +455,61 @@ public class MainActivity extends AppCompatActivity {
             d.draw(canvas);
 
 
+            //displaying pointer
+            getSourceNode();//get the source node : TODO: main algorithm here
+
+            getCurrentCoordinates();//TODO: update current coordinates
+
             paint = new Paint();
             paint.setColor(Color.RED);
             paint.setStrokeWidth(10);
 
             //drawPoint(Util.MAX_MAP_WIDTH, Util.MAX_MAP_HEIGHT, paint, canvas);
 
-            //if(checkifValid(Util.x_destination_coordinate, Util.y_destination_coordinate)) {
-                drawPath(NodesCoordinates.path_index, canvas, paint);//draw path from source to destination
-            //}
+            //draw path from source to destination
+            drawPath(NodesCoordinates.path_index, canvas, paint);
+
+
+            //pointer to display bot movement
+            Drawable pointer = getResources().getDrawable(R.drawable.fork_lift);
+            pointer.setBounds((int)Util.x_current_screen-13, (int)Util.y_current_screen-25,
+                    (int)Util.x_current_screen+13, (int)Util.y_current_screen+25);
+            //pointer.draw(canvas);
+
+            Matrix matrix = new Matrix();
+
+            Bitmap srcBitmap = BitmapFactory.decodeResource(
+                    MainActivity.this.getResources(),
+                    R.drawable.fork_lift
+            );
+
+            matrix.postScale((float)0.25,(float)0.2);
+
+            Bitmap bitmap = Bitmap.createBitmap(srcBitmap, 0, 0, srcBitmap.getWidth(),
+                    srcBitmap.getHeight(), matrix, true);
+
+            matrix.setRotate(
+                    Util.rotation_angle, // degrees
+                    bitmap.getWidth() / 2, // px
+                    bitmap.getHeight() / 2 // py
+            );
+
+            matrix.postTranslate(
+                    (int)Util.x_current_screen - bitmap.getWidth() / 2,
+                    (int)Util.y_current_screen - bitmap.getHeight() / 2
+            );
+
+            Paint paint1 = new Paint();
+            paint1.setAntiAlias(true);
+            paint1.setDither(true);
+            paint1.setFilterBitmap(true);
+
+            canvas.drawBitmap(
+                    bitmap, // Bitmap
+                    matrix, // Matrix
+                    paint // Paint
+            );
+
 
             canvas.restore();
 
@@ -487,7 +538,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         public void findRoutes(){
-            RouteActivity.dijkstra(NodesCoordinates.new_graph,0);
+            RouteActivity.dijkstra(NodesCoordinates.new_graph,Util.source_node);
         }
 
         public void scaleNode(){
@@ -500,7 +551,23 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+
+        public void getCurrentCoordinates(){
+
+            Util.x_current_screen = (float) ((Util.x_current_coordinate/NodesCoordinates.MAX_WIDTH)*(Util.MAX_MAP_WIDTH));
+            Util.y_current_screen = (float) (Util.MAX_MAP_HEIGHT -
+                    ((Util.y_current_coordinate/NodesCoordinates.MAX_HEIGHT)*(Util.MAX_MAP_HEIGHT)));
+        }
+
         public void getSourceNode(){
+
+            //update current position
+
+            Util.x_source_coordinate = NodesCoordinates.nodes[Util.source_node][0];
+            Util.y_source_coordinate = NodesCoordinates.nodes[Util.source_node][1];
+
+            Util.x_current_coordinate = Util.x_source_coordinate;
+            Util.y_current_coordinate = Util.y_source_coordinate;
 
         }
 
