@@ -365,8 +365,8 @@ public class MainActivity extends AppCompatActivity {
                         final float dx = x - mLastTouchX;
                         final float dy = y - mLastTouchY;
 
-                        mPosX += dx;
-                        mPosY += dy;
+                        //mPosX += dx;
+                        //mPosY += dy;
 
                         invalidate();
                     }
@@ -439,14 +439,15 @@ public class MainActivity extends AppCompatActivity {
             super.onDraw(canvas);
 
             canvas.save();
-            canvas.scale(scaleFactor, scaleFactor/*, -mPosX, -mPosY*/);
+            //canvas.scale(scaleFactor, scaleFactor/*, -mPosX, -mPosY*/);
 
             Drawable d = getResources().getDrawable(R.drawable.ic_layoutcriotam_vector);
-            d.setBounds(0, 0, d.getIntrinsicWidth()*5, d.getIntrinsicHeight()*5);
-            d.draw(canvas);
 
-            Util.MAX_MAP_WIDTH = d.getIntrinsicWidth()*5;
-            Util.MAX_MAP_HEIGHT =  d.getIntrinsicHeight()*5;
+            Util.MAX_MAP_WIDTH = d.getIntrinsicWidth()*1;
+            Util.MAX_MAP_HEIGHT =  d.getIntrinsicHeight()*1;
+
+            d.setBounds(0, 0, (int)Util.MAX_MAP_WIDTH, (int)Util.MAX_MAP_HEIGHT);
+            d.draw(canvas);
 
 
             paint = new Paint();
@@ -466,14 +467,15 @@ public class MainActivity extends AppCompatActivity {
         private class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
             @Override
             public boolean onScale(ScaleGestureDetector detector) {
-                scaleFactor *= detector.getScaleFactor();
-                scaleFactor = Math.max(MIN_ZOOM, Math.min(scaleFactor, MAX_ZOOM));
+                //scaleFactor *= detector.getScaleFactor();
+                //scaleFactor = Math.max(MIN_ZOOM, Math.min(scaleFactor, MAX_ZOOM));
                 //scaleFactor = Math.min(scaleFactor, MAX_ZOOM);
                 invalidate();
                 return true;
             }
         }
 
+        //for testig
         public void drawPoint(double map_width, double map_height, Paint paint, Canvas canvas){
 
             float point_x = (float) ((NodesCoordinates.node26[0]/NodesCoordinates.MAX_WIDTH)*(map_width));
@@ -674,6 +676,26 @@ public class MainActivity extends AppCompatActivity {
 
             if(coordinate_x > 2.82 && coordinate_y > 5.75 ){
                 Toast.makeText(MainActivity.this, "Can't move to empty area", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            if(coordinate_x > 0 && coordinate_x < 1.118 && coordinate_y > 2.92 && coordinate_y < 3.42){
+                Toast.makeText(MainActivity.this, "Can't move to this area", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            if(coordinate_x > 0 && coordinate_x < 1.93 && coordinate_y > 5.22 && coordinate_y < 5.66){
+                Toast.makeText(MainActivity.this, "Can't move to this area", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            if(coordinate_x > 2.6 && coordinate_x < 4.608 && coordinate_y > 5.31 && coordinate_y < 5.75){
+                Toast.makeText(MainActivity.this, "Can't move to this area", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            if(coordinate_x > 2.6 && coordinate_x < 4.608 && coordinate_y > 2.278 && coordinate_y < 3.51){
+                Toast.makeText(MainActivity.this, "Can't move to this area", Toast.LENGTH_SHORT).show();
                 return false;
             }
 
