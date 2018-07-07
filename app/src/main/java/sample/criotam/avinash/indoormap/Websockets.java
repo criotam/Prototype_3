@@ -14,12 +14,22 @@ import java.net.URISyntaxException;
 
 public class Websockets {
 
-    private WebSocketClient mWebSocketClient;
+    private static WebSocketClient mWebSocketClient;
 
     Context context;
 
-    public Websockets(Context context){
+    Callback callback;
+
+    public interface Callback{
+        public void onOpen();
+        public void onClose();
+        public void onError();
+        public void onMessage(String message);
+    }
+
+    public Websockets(Context context, Callback callback){
         this.context = context;
+        this.callback = callback;
     }
 
     public void connectWebSocket() {
@@ -35,15 +45,17 @@ public class Websockets {
         mWebSocketClient = new WebSocketClient(uri, new Draft_17()) {
             @Override
             public void onOpen(ServerHandshake serverHandshake) {
-                Toast.makeText(context, "Connected",Toast.LENGTH_LONG).show();
+                //Toast.makeText(context, "Connected",Toast.LENGTH_LONG).show();
                 Log.d("Websocket", "Opened");
                 mWebSocketClient.send("admin");
+                callback.onOpen();
             }
 
             @Override
             public void onMessage(String s) {
                 final String message = s;
                 Log.d("Message", ""+message);
+                callback.onMessage(message);
             }
 
             @Override
@@ -51,11 +63,13 @@ public class Websockets {
                 Log.i("Websocket", "Closed " + s);
                 mWebSocketClient = null;
                 Toast.makeText(context, "DisConnected",Toast.LENGTH_LONG).show();
+                callback.onClose();
             }
 
             @Override
             public void onError(Exception e) {
                 Log.i("Websocket", "Error " + e.getMessage());
+                callback.onError();
             }
         };
         mWebSocketClient.connect();

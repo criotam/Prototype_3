@@ -68,8 +68,6 @@ public class MainActivity extends AppCompatActivity {
 
     private Integer[] index = new Integer[33];
 
-    Websockets websockets;
-
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -128,20 +126,12 @@ public class MainActivity extends AppCompatActivity {
         findPosition();
 
 */
-        websockets = new Websockets(MainActivity.this);
-        websockets.connectWebSocket();
+
         setContentView(new CustomView(this));
     }
 
     protected void onPause() {
         //unregisterReceiver(wifiReceiver);
-        if(websockets!=null){
-            if(websockets.getWebsocketClient()!=null){
-                if(websockets.getWebsocketClient().isOpen()){
-                    websockets.getWebsocketClient().close();
-                }
-            }
-        }
         super.onPause();
     }
 
@@ -153,13 +143,20 @@ public class MainActivity extends AppCompatActivity {
         );
         */
 
-        if(websockets!=null){
-            if(websockets.getWebsocketClient()!=null){
-                if(websockets.getWebsocketClient().isClosed()){
-                    websockets.connectWebSocket();
+ /*       MainActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(websockets!=null){
+                    if(websockets.getWebsocketClient()!=null){
+                        if(websockets.getWebsocketClient().isClosed()){
+                            //websockets = new Websockets(MainActivity.this);
+                            websockets.connectWebSocket();
+                        }
+                    }
                 }
             }
-        }
+        });
+*/
         super.onResume();
     }
 
@@ -356,9 +353,46 @@ public class MainActivity extends AppCompatActivity {
 
     private class CustomView extends View {
 
+        public Websockets websockets;
+
         public CustomView(Context context){
             super(context);
             //detector = new ScaleGestureDetector(getContext(), new ScaleListener());
+
+            getSourceNode();//get the source node : TODO: main algorithm here
+
+            websockets = new Websockets(MainActivity.this, new Websockets.Callback() {
+                @Override
+                public void onOpen() {
+                    //websockets.getWebsocketClient().send("admin");
+                }
+
+                @Override
+                public void onClose() {
+
+                }
+
+                @Override
+                public void onError() {
+
+                }
+
+                @Override
+                public void onMessage(final String message) {
+                    if(message.contains("distance")) {
+                        MainActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                move_fork_lift(Double.parseDouble(message.split("@")[0].split(":")[1]),
+                                        Double.parseDouble(message.split("@")[1].split(":")[1]));
+
+                            }
+                        });
+                    }
+                }
+            });
+            websockets.connectWebSocket();
+
             scaleNode();
         }
 
@@ -487,7 +521,7 @@ public class MainActivity extends AppCompatActivity {
 
         @RequiresApi(api = Build.VERSION_CODES.O)
         @Override
-        protected void onDraw(Canvas canvas) {
+        protected void onDraw(final Canvas canvas) {
             super.onDraw(canvas);
 
             canvas.save();
@@ -505,7 +539,6 @@ public class MainActivity extends AppCompatActivity {
 
 
             //displaying pointer
-            getSourceNode();//get the source node : TODO: main algorithm here
 
             getCurrentCoordinates();//TODO: update current coordinates
 
@@ -519,45 +552,54 @@ public class MainActivity extends AppCompatActivity {
             drawPath(NodesCoordinates.path_index, canvas, paint);
 
 
-            //pointer to display bot movement
-            Drawable pointer = getResources().getDrawable(R.drawable.fork_lift);
-            pointer.setBounds((int)Util.x_current_screen-13, (int)Util.y_current_screen-25,
-                    (int)Util.x_current_screen+13, (int)Util.y_current_screen+25);
-            //pointer.draw(canvas);
+            MainActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
 
-            Matrix matrix = new Matrix();
+                //pointer to display bot movement
+                Drawable pointer = getResources().getDrawable(R.drawable.fork_lift);
+                pointer.setBounds((int)Util.x_current_screen-13, (int)Util.y_current_screen-25,
+                        (int)Util.x_current_screen+13, (int)Util.y_current_screen+25);
+                //pointer.draw(canvas);
 
-            Bitmap srcBitmap = BitmapFactory.decodeResource(
-                    MainActivity.this.getResources(),
-                    R.drawable.fork_lift
-            );
+                Matrix matrix = new Matrix();
 
-            matrix.postScale((float)0.25,(float)0.2);
+                Bitmap srcBitmap = BitmapFactory.decodeResource(
+                        MainActivity.this.getResources(),
+                        R.drawable.fork_lift
+                );
 
-            Bitmap bitmap = Bitmap.createBitmap(srcBitmap, 0, 0, srcBitmap.getWidth(),
-                    srcBitmap.getHeight(), matrix, true);
+                matrix.postScale((float)0.25,(float)0.2);
 
-            matrix.setRotate(
-                    Util.rotation_angle, // degrees
-                    bitmap.getWidth() / 2, // px
-                    bitmap.getHeight() / 2 // py
-            );
+                Bitmap bitmap = Bitmap.createBitmap(srcBitmap, 0, 0, srcBitmap.getWidth(),
+                        srcBitmap.getHeight(), matrix, true);
 
-            matrix.postTranslate(
-                    (int)Util.x_current_screen - bitmap.getWidth() / 2,
-                    (int)Util.y_current_screen - bitmap.getHeight() / 2
-            );
+                matrix.setRotate(
+                        Util.rotation_angle, // degrees
+                        bitmap.getWidth() / 2, // px
+                        bitmap.getHeight() / 2 // py
+                );
 
-            Paint paint1 = new Paint();
-            paint1.setAntiAlias(true);
-            paint1.setDither(true);
-            paint1.setFilterBitmap(true);
+                getCurrentCoordinates();
 
-            canvas.drawBitmap(
-                    bitmap, // Bitmap
-                    matrix, // Matrix
-                    paint // Paint
-            );
+                matrix.postTranslate(
+                        (int)Util.x_current_screen - bitmap.getWidth() / 2,
+                        (int)Util.y_current_screen - bitmap.getHeight() / 2
+                );
+
+                Paint paint1 = new Paint();
+                paint1.setAntiAlias(true);
+                paint1.setDither(true);
+                paint1.setFilterBitmap(true);
+
+                canvas.drawBitmap(
+                        bitmap, // Bitmap
+                        matrix, // Matrix
+                        paint // Paint
+                );
+
+                }
+            });
 
 
             canvas.restore();
@@ -586,10 +628,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        public void findRoutes(){
-            RouteActivity.dijkstra(NodesCoordinates.new_graph,Util.source_node);
-        }
-
         public void scaleNode(){
 
             for(int i= 0; i<34; i++){
@@ -599,7 +637,6 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
-
 
         public void getCurrentCoordinates(){
 
@@ -620,8 +657,12 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        public double[] node_distance = new double[34];
+        public void findRoutes(){
+            RouteActivity.dijkstra(NodesCoordinates.new_graph,Util.source_node);
+        }
 
+
+        public double[] node_distance = new double[34];
         public void findNearesDestinationtNode(double dest_x, double dest_y){
 
             Log.d("coordinates", dest_x+":"+dest_y);
@@ -646,6 +687,7 @@ public class MainActivity extends AppCompatActivity {
             findRoutetoDestination();
 
         }
+
 
         public void findRoutetoDestination(){
 
@@ -717,6 +759,8 @@ public class MainActivity extends AppCompatActivity {
                             canvas.drawLine(start_x, start_y, end_x, end_y, _paint);
                         }
 
+                        //create_path_command();
+
                         canvas.drawLine(end_x, end_y,
                                 (float)Util.x_destination_screen,
                                 (float)Util.y_destination_screen, _paint);
@@ -727,6 +771,7 @@ public class MainActivity extends AppCompatActivity {
                 for(String command :Util.path_command){
                     data += command + "@";
                 }
+                data = data.substring(0,data.length()-2);
                 sendData(data); //send data to server
             }
 
@@ -746,8 +791,11 @@ public class MainActivity extends AppCompatActivity {
 
         public void move_fork_lift(double distance, double angle){
 
-            Util.x_current_coordinate = Util.x_current_coordinate - distance*Math.sin(Math.toRadians(angle));
-            Util.y_current_coordinate = Util.y_current_coordinate + distance*Math.cos(Math.toRadians(angle));
+            Util.x_current_coordinate = Util.x_current_coordinate - (distance*Math.sin(Math.toRadians(angle)))/100.0;
+            Util.y_current_coordinate = Util.y_current_coordinate + (distance*Math.cos(Math.toRadians(angle)))/100.0;
+
+            getCurrentCoordinates();
+
             Util.rotation_angle = (float)(0-angle);
 
             invalidate();
@@ -857,9 +905,7 @@ public class MainActivity extends AppCompatActivity {
                         websockets.getWebsocketClient().send("admin");
                         websockets.getWebsocketClient().send(data);
                     }else{
-                        websockets.connectWebSocket();
-                        websockets.getWebsocketClient().send(data);
-                        //Toast.makeText(MainActivity.this, "connection closed",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "connection closed",Toast.LENGTH_SHORT).show();
                     }
                 }else{
                     Toast.makeText(MainActivity.this, "connection closed",Toast.LENGTH_SHORT).show();
