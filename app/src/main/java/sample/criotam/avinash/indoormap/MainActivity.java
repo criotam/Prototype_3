@@ -15,8 +15,10 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.VectorDrawable;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
 import android.support.graphics.drawable.VectorDrawableCompat;
 import android.support.v4.view.MotionEventCompat;
@@ -66,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Integer[] index = new Integer[33];
 
+    Websockets websockets;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -91,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        /*
         setContentView(R.layout.activity_main);
         resultset = (TextView) findViewById(R.id.resultset);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
@@ -123,12 +127,21 @@ public class MainActivity extends AppCompatActivity {
         initialize();
         findPosition();
 
-
+*/
+        websockets = new Websockets(MainActivity.this);
+        websockets.connectWebSocket();
         setContentView(new CustomView(this));
     }
 
     protected void onPause() {
         //unregisterReceiver(wifiReceiver);
+        if(websockets!=null){
+            if(websockets.getWebsocketClient()!=null){
+                if(websockets.getWebsocketClient().isOpen()){
+                    websockets.getWebsocketClient().close();
+                }
+            }
+        }
         super.onPause();
     }
 
@@ -139,6 +152,14 @@ public class MainActivity extends AppCompatActivity {
                 new IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)
         );
         */
+
+        if(websockets!=null){
+            if(websockets.getWebsocketClient()!=null){
+                if(websockets.getWebsocketClient().isClosed()){
+                    websockets.connectWebSocket();
+                }
+            }
+        }
         super.onResume();
     }
 
@@ -654,6 +675,7 @@ public class MainActivity extends AppCompatActivity {
             invalidate();
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.O)
         public void drawPath(int index, Canvas canvas, Paint paint){
 
             Log.d("draw path",index+"");
@@ -698,6 +720,8 @@ public class MainActivity extends AppCompatActivity {
                                 (float)Util.y_destination_screen, _paint);
                     }
                 }
+
+                sendData(String.join(", ", Util.path_command)); //send data to server
             }
 
         }
@@ -707,8 +731,8 @@ public class MainActivity extends AppCompatActivity {
             double distance = Math.sqrt(Math.pow(NodesCoordinates.nodes[src_node][0]-NodesCoordinates.nodes[dest_node][0],2)
             + Math.pow(NodesCoordinates.nodes[src_node][1]-NodesCoordinates.nodes[dest_node][1],2));
 
-            double angle = Math.atan((NodesCoordinates.nodes[src_node][1]-NodesCoordinates.nodes[dest_node][1])/
-                    (NodesCoordinates.nodes[src_node][0]-NodesCoordinates.nodes[dest_node][0]));
+            double angle = Math.toDegrees(Math.atan((NodesCoordinates.nodes[src_node][1]-NodesCoordinates.nodes[dest_node][1])/
+                    (NodesCoordinates.nodes[src_node][0]-NodesCoordinates.nodes[dest_node][0])));
             Log.d("angle", angle+"");
             Util.path_command.add("turn:"+angle);
             Util.path_command.add("move:"+distance);
@@ -809,6 +833,22 @@ public class MainActivity extends AppCompatActivity {
             }
 
             return true;
+        }
+
+        public void sendData(String data){
+            if(websockets!=null){
+                if(websockets.getWebsocketClient()!=null){
+                    if(websockets.getWebsocketClient().isOpen()){
+                        websockets.getWebsocketClient().send(data);
+                    }else{
+                        Toast.makeText(MainActivity.this, "connection closed",Toast.LENGTH_SHORT).show();
+                    }
+                }else{
+                    Toast.makeText(MainActivity.this, "connection closed",Toast.LENGTH_SHORT).show();
+                }
+            }else{
+                Toast.makeText(MainActivity.this, "connection closed",Toast.LENGTH_SHORT).show();
+            }
         }
 
     }

@@ -47,5 +47,5 @@ public class Util {
 
     public static int[] path_nodes = new int[33];
 
-    public static ArrayList<String> path_command;
+    public static ArrayList<String> path_command = new ArrayList<>();
 }
