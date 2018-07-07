@@ -37,7 +37,7 @@ public class Websockets {
             public void onOpen(ServerHandshake serverHandshake) {
                 Toast.makeText(context, "Connected",Toast.LENGTH_LONG).show();
                 Log.d("Websocket", "Opened");
-                mWebSocketClient.send("Hello from " + Build.MANUFACTURER + " " + Build.MODEL);
+                mWebSocketClient.send("admin");
             }
 
             @Override

@@ -358,7 +358,7 @@ public class MainActivity extends AppCompatActivity {
 
         public CustomView(Context context){
             super(context);
-            detector = new ScaleGestureDetector(getContext(), new ScaleListener());
+            //detector = new ScaleGestureDetector(getContext(), new ScaleListener());
             scaleNode();
         }
 
@@ -370,7 +370,7 @@ public class MainActivity extends AppCompatActivity {
 
         private float scaleFactor = 1f;
 
-        private ScaleGestureDetector detector;
+        //private ScaleGestureDetector detector;
 
         private int mActivePointerId = INVALID_POINTER_ID;
 
@@ -380,7 +380,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public boolean onTouchEvent(MotionEvent event) {
-            detector.onTouchEvent(event);
+            //detector.onTouchEvent(event);
             final int action = MotionEventCompat.getActionMasked(event);
 
             switch (action) {
@@ -410,6 +410,7 @@ public class MainActivity extends AppCompatActivity {
                     flag = false;
 
                     // Only move if the ScaleGestureDetector isn't processing a gesture.
+                    /*
                     if (!detector.isInProgress()) {
                         // Calculate the distance moved
                         final float dx = x - mLastTouchX;
@@ -419,7 +420,7 @@ public class MainActivity extends AppCompatActivity {
                         //mPosY += dy;
 
                         invalidate();
-                    }
+                    }*/
                     // Remember this touch position for the next move event
                     mLastTouchX = x;
                     mLastTouchY = y;
@@ -484,6 +485,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
 
+        @RequiresApi(api = Build.VERSION_CODES.O)
         @Override
         protected void onDraw(Canvas canvas) {
             super.onDraw(canvas);
@@ -568,7 +570,7 @@ public class MainActivity extends AppCompatActivity {
                 //scaleFactor *= detector.getScaleFactor();
                 //scaleFactor = Math.max(MIN_ZOOM, Math.min(scaleFactor, MAX_ZOOM));
                 //scaleFactor = Math.min(scaleFactor, MAX_ZOOM);
-                invalidate();
+                //invalidate();
                 return true;
             }
         }
@@ -721,7 +723,11 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
 
-                sendData(String.join(", ", Util.path_command)); //send data to server
+                String data = "";
+                for(String command :Util.path_command){
+                    data += command + " @ ";
+                }
+                sendData(data); //send data to server
             }
 
         }
@@ -731,10 +737,10 @@ public class MainActivity extends AppCompatActivity {
             double distance = Math.sqrt(Math.pow(NodesCoordinates.nodes[src_node][0]-NodesCoordinates.nodes[dest_node][0],2)
             + Math.pow(NodesCoordinates.nodes[src_node][1]-NodesCoordinates.nodes[dest_node][1],2));
 
-            double angle = Math.toDegrees(Math.atan((NodesCoordinates.nodes[src_node][1]-NodesCoordinates.nodes[dest_node][1])/
-                    (NodesCoordinates.nodes[src_node][0]-NodesCoordinates.nodes[dest_node][0])));
+            double angle = Math.toDegrees(Math.atan((NodesCoordinates.nodes[dest_node][0]-NodesCoordinates.nodes[src_node][0])/
+                    (NodesCoordinates.nodes[dest_node][1]-NodesCoordinates.nodes[src_node][1])));
             Log.d("angle", angle+"");
-            Util.path_command.add("turn:"+angle);
+            Util.path_command.add("turn:"+(0-angle));
             Util.path_command.add("move:"+distance);
         }
 
@@ -839,8 +845,11 @@ public class MainActivity extends AppCompatActivity {
             if(websockets!=null){
                 if(websockets.getWebsocketClient()!=null){
                     if(websockets.getWebsocketClient().isOpen()){
+                        websockets.getWebsocketClient().send("admin");
                         websockets.getWebsocketClient().send(data);
                     }else{
+                        websockets.connectWebSocket();
+                        websockets.getWebsocketClient().send(data);
                         Toast.makeText(MainActivity.this, "connection closed",Toast.LENGTH_SHORT).show();
                     }
                 }else{
