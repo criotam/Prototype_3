@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-/*
+
         setContentView(R.layout.activity_main);
         resultset = (TextView) findViewById(R.id.resultset);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
         initialize();
         findPosition();
-*/
+
 
         setContentView(new CustomView(this));
     }
@@ -283,11 +283,37 @@ public class MainActivity extends AppCompatActivity {
 
         resultset.setText("");
 
-        resultset.setText(Arrays.toString(trackerActivity.getSortedArray()));
+        //resultset.setText(Arrays.toString(trackerActivity.getSortedArray()));
 
         //resultset.setText("");
         for (int i =0; i< trackerActivity.getMap().size(); i++){
             resultset.append("\n"+(i+1)+": "+trackerActivity.getMap().get(i));
+        }
+
+        for(int i = 0; i<TrackerActivity.nearest_nodes.length; i++){
+
+            for(int j = 0; j< trackerActivity.getMap().size(); j++) {
+                if (trackerActivity.getSortedArray()[i] == (double)trackerActivity.getMap().get(j)){
+                    TrackerActivity.nearest_nodes[i] = j;
+                    resultset.append("\n"+j);
+
+                    if(Arrays.asList(TrackerActivity.room1).contains((j+1))){
+                        TrackerActivity.nearest_rooms[i] = "room1";
+                    }
+
+                    else if(Arrays.asList(TrackerActivity.room2).contains((j+1))){
+                        TrackerActivity.nearest_rooms[i] = "room2";
+                    }
+
+                    else if(Arrays.asList(TrackerActivity.hall).contains((j+1))){
+                        TrackerActivity.nearest_rooms[i] = "hall";
+                    }
+
+                    else if(Arrays.asList(TrackerActivity.lab).contains((j+1))){
+                        TrackerActivity.nearest_rooms[i] = "lab";
+                    }
+                }
+            }
         }
 
     }
@@ -442,7 +468,7 @@ public class MainActivity extends AppCompatActivity {
             super.onDraw(canvas);
 
             canvas.save();
-            //canvas.scale(scaleFactor, scaleFactor/*, -mPosX, -mPosY*/);
+            //canvas.scale(scaleFactor, scaleFactor, -mPosX, -mPosY);
 
 
             //displaying criotam graph
@@ -638,6 +664,8 @@ public class MainActivity extends AppCompatActivity {
                 _paint.setColor(Color.GREEN);
                 _paint.setStrokeWidth(2);
 
+                Util.path_command.clear();
+
                 if (NodesCoordinates.path_array[index] != null) {
                     int counter = NodesCoordinates.path_array[index].split(":", -1).length - 1;
                     //Log.d(": count", "" + counter);
@@ -669,7 +697,11 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
+        }
 
+        public void create_path_command(int src_node, int dest_node){
+
+            double distance = Math.sqrt(Math.pow(NodesCoordinates.nodes[Integer.parseInt(path.split(":")[i])][0]));
         }
 
         public boolean checkifValid(double dest_x, double dest_y){
@@ -770,6 +802,5 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
-
 
 }

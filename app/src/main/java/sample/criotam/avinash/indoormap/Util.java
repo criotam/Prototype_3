@@ -1,4 +1,5 @@
 package sample.criotam.avinash.indoormap;
+import java.util.ArrayList;
 
 public class Util {
 
@@ -44,10 +45,7 @@ public class Util {
 
     public static int destination_key_node;
 
-    public static double[] nearest_source_node = new double[2];
-
-    public static double[] nearest_destination_node = new double[2];
-
     public static int[] path_nodes = new int[33];
 
+    public static ArrayList<String> path_command;
 }

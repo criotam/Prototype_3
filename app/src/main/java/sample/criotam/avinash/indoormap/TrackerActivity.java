@@ -5,9 +5,16 @@ import java.util.HashMap;
 
 public class TrackerActivity {
 
+    public static int[] nearest_nodes = new int[13];
+    public static String[] nearest_rooms = new String[13];
     public static int size = 33;
     public static double[] distance = new double[size];
     public static HashMap<Integer, Double> map = new HashMap();
+
+    public static int[] room1 = {18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29};
+    public static int[] room2 = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
+    public static int[] hall = {14, 15, 16, 17};
+    public static int[] lab = {30, 31, 32, 33};
 
     public TrackerActivity(double avg_criotam, double avg_espap1, double avg_espap2, double avg_aspap3, double avg_espap4,
                            double avg_espap5, double sd_criotam, double sd_espap1, double sd_espap2, double sd_espap3,
@@ -20,7 +27,7 @@ public class TrackerActivity {
         sd[0] = sd_criotam; sd[1] = sd_espap1; sd[2] = sd_espap2; sd[3] = sd_espap3; sd[4] = sd_espap4; sd[5] = sd_espap5;
 
         euclideanDistance(avg, sd);
-        sortedMap(distance);
+        indexMap(distance);
 
     }
 
@@ -45,7 +52,7 @@ public class TrackerActivity {
         }
     }
 
-    public void sortedMap(double[] dist){
+    public void indexMap(double[] dist){
 
         //Arrays.sort(dist);
 
