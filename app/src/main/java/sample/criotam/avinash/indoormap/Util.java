@@ -23,7 +23,7 @@ public class Util {
 
     public static double y_source_screen = 0.0;
 
-    public static int source_node = 12;
+    public static int source_node = 0;
 
     public static float rotation_angle = 0;
 

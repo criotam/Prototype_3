@@ -686,6 +686,9 @@ public class MainActivity extends AppCompatActivity {
                                     ((NodesCoordinates.nodes[Integer.parseInt(path.split(":")[i+1])][1]
                                             /NodesCoordinates.MAX_HEIGHT)*(Util.MAX_MAP_HEIGHT)));
 
+                            create_path_command(Integer.parseInt(path.split(":")[i]),
+                                    Integer.parseInt(path.split(":")[i+1]));
+
                             Log.d("points", start_x+":"+start_y+":"+end_x+":"+end_y);
                             canvas.drawLine(start_x, start_y, end_x, end_y, _paint);
                         }
@@ -701,7 +704,14 @@ public class MainActivity extends AppCompatActivity {
 
         public void create_path_command(int src_node, int dest_node){
 
-            double distance = Math.sqrt(Math.pow(NodesCoordinates.nodes[Integer.parseInt(path.split(":")[i])][0]));
+            double distance = Math.sqrt(Math.pow(NodesCoordinates.nodes[src_node][0]-NodesCoordinates.nodes[dest_node][0],2)
+            + Math.pow(NodesCoordinates.nodes[src_node][1]-NodesCoordinates.nodes[dest_node][1],2));
+
+            double angle = Math.atan((NodesCoordinates.nodes[src_node][1]-NodesCoordinates.nodes[dest_node][1])/
+                    (NodesCoordinates.nodes[src_node][0]-NodesCoordinates.nodes[dest_node][0]));
+            Log.d("angle", angle+"");
+            Util.path_command.add("turn:"+angle);
+            Util.path_command.add("move:"+distance);
         }
 
         public boolean checkifValid(double dest_x, double dest_y){
