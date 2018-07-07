@@ -244,7 +244,7 @@ void setup()
     // Get magnetometer calibration from AK8963 ROM
     initAK8963(magCalibration); Serial.println("AK8963 initialized for active data mode...."); // Initialize device for active mode read of magnetometer
     getMres();
-//    magcalMPU9250(magBias,magScale); 
+    //magcalMPU9250(magBias,magScale); 
  
   }
   else
@@ -325,8 +325,16 @@ void loop()
                                                               //Magnetic declination: -1° 11'*/
     roll  *= 180.0f / PI;
     
-    Serial.print("Yaw: ");
-    Serial.println(abs(yaw+180));
+      Serial.print("Yaw: ");
+      if(yaw > 0 && yaw < 90)
+      {
+        yaw = yaw * 1.9;
+      }
+      if(yaw < 0 && yaw > -90)
+      {
+        yaw = yaw * 1.5;
+      }
+    Serial.println(yaw);
 
     count = millis(); 
     sumCount = 0;
