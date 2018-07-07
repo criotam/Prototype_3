@@ -725,7 +725,7 @@ public class MainActivity extends AppCompatActivity {
 
                 String data = "";
                 for(String command :Util.path_command){
-                    data += command + " @ ";
+                    data += command + "@";
                 }
                 sendData(data); //send data to server
             }
@@ -742,6 +742,11 @@ public class MainActivity extends AppCompatActivity {
             Log.d("angle", angle+"");
             Util.path_command.add("turn:"+(0-angle));
             Util.path_command.add("move:"+distance);
+        }
+
+        public void move_fork_lift(float distance, float angle){
+
+            
         }
 
         public boolean checkifValid(double dest_x, double dest_y){
@@ -850,7 +855,7 @@ public class MainActivity extends AppCompatActivity {
                     }else{
                         websockets.connectWebSocket();
                         websockets.getWebsocketClient().send(data);
-                        Toast.makeText(MainActivity.this, "connection closed",Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(MainActivity.this, "connection closed",Toast.LENGTH_SHORT).show();
                     }
                 }else{
                     Toast.makeText(MainActivity.this, "connection closed",Toast.LENGTH_SHORT).show();
