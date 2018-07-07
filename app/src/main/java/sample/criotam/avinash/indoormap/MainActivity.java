@@ -744,9 +744,13 @@ public class MainActivity extends AppCompatActivity {
             Util.path_command.add("move:"+distance);
         }
 
-        public void move_fork_lift(float distance, float angle){
+        public void move_fork_lift(double distance, double angle){
 
-            
+            Util.x_current_coordinate = Util.x_current_coordinate - distance*Math.sin(Math.toRadians(angle));
+            Util.y_current_coordinate = Util.y_current_coordinate + distance*Math.cos(Math.toRadians(angle));
+            Util.rotation_angle = (float)(0-angle);
+
+            invalidate();
         }
 
         public boolean checkifValid(double dest_x, double dest_y){
