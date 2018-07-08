@@ -580,8 +580,6 @@ public class MainActivity extends AppCompatActivity {
                         bitmap.getHeight() / 2 // py
                 );
 
-                getCurrentCoordinates();
-
                 matrix.postTranslate(
                         (int)Util.x_current_screen - bitmap.getWidth() / 2,
                         (int)Util.y_current_screen - bitmap.getHeight() / 2
@@ -714,6 +712,8 @@ public class MainActivity extends AppCompatActivity {
 
             NodesCoordinates.path_index = path_index;
 
+            getPath(path_index);
+
             Log.d("path index", ""+path_index+": "+NodesCoordinates.path_array[path_index]);
 
             invalidate();
@@ -765,6 +765,64 @@ public class MainActivity extends AppCompatActivity {
                                 (float)Util.x_destination_screen,
                                 (float)Util.y_destination_screen, _paint);
                     }
+                }
+
+                String data = "";
+                for(String command :Util.path_command){
+                    data += command + "@";
+                }
+                data = data.substring(0,data.length()-2);
+                //sendData(data); //send data to server
+            }
+
+        }
+
+
+        public void getPath(int index){
+
+            Log.d("draw path",index+"");
+            if(index!=-1) {
+
+                float start_x = 0, start_y = 0, end_x = 0, end_y = 0;
+                Paint _paint = new Paint();
+                _paint.setColor(Color.GREEN);
+                _paint.setStrokeWidth(2);
+
+                Util.path_command.clear();
+
+                if (NodesCoordinates.path_array[index] != null) {
+                    int counter = NodesCoordinates.path_array[index].split(":", -1).length - 1;
+                    //Log.d(": count", "" + counter);
+
+                    if (counter != -1) {
+                        String path = NodesCoordinates.path_array[index];
+                        for(int i = 0; i<counter-1; i++){
+
+                            start_x = (float) ((NodesCoordinates.nodes[Integer.parseInt(path.split(":")[i])][0]
+                                    /NodesCoordinates.MAX_WIDTH)*(Util.MAX_MAP_WIDTH));
+                            start_y = (float) (Util.MAX_MAP_HEIGHT -
+                                    ((NodesCoordinates.nodes[Integer.parseInt(path.split(":")[i])][1]
+                                            /NodesCoordinates.MAX_HEIGHT)*(Util.MAX_MAP_HEIGHT)));
+
+                            end_x = (float) ((NodesCoordinates.nodes[Integer.parseInt(path.split(":")[i+1])][0]
+                                    /NodesCoordinates.MAX_WIDTH)*(Util.MAX_MAP_WIDTH));
+                            end_y = (float) (Util.MAX_MAP_HEIGHT -
+                                    ((NodesCoordinates.nodes[Integer.parseInt(path.split(":")[i+1])][1]
+                                            /NodesCoordinates.MAX_HEIGHT)*(Util.MAX_MAP_HEIGHT)));
+
+                            create_path_command(Integer.parseInt(path.split(":")[i]),
+                                    Integer.parseInt(path.split(":")[i+1]));
+
+                            Log.d("points", start_x+":"+start_y+":"+end_x+":"+end_y);
+                            //canvas.drawLine(start_x, start_y, end_x, end_y, _paint);
+                        }
+
+                        //create_path_command();
+/*
+                        canvas.drawLine(end_x, end_y,
+                                (float)Util.x_destination_screen,
+                                (float)Util.y_destination_screen, _paint);
+  */                  }
                 }
 
                 String data = "";
