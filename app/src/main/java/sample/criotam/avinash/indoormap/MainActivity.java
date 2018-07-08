@@ -849,8 +849,12 @@ public class MainActivity extends AppCompatActivity {
 
         public void move_fork_lift(double distance, double angle){
 
-            Util.x_current_coordinate = Util.x_current_coordinate - (distance*Math.sin(Math.toRadians(angle)))/100.0;
-            Util.y_current_coordinate = Util.y_current_coordinate + (distance*Math.cos(Math.toRadians(angle)))/100.0;
+            //TODO:replace current coordinate with source coordinate
+            //Util.x_current_coordinate = Util.x_current_coordinate - (distance*Math.sin(Math.toRadians(angle)))/100.0;
+            //Util.y_current_coordinate = Util.y_current_coordinate + (distance*Math.cos(Math.toRadians(angle)))/100.0;
+
+            Util.x_current_coordinate = NodesCoordinates.node1[0] - (distance*Math.sin(Math.toRadians(angle)))/100.0;
+            Util.y_current_coordinate = NodesCoordinates.node1[1] + (distance*Math.cos(Math.toRadians(angle)))/100.0;
 
             getCurrentCoordinates();
 
