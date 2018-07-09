@@ -36,7 +36,7 @@ public class Websockets {
 
         URI uri;
         try {
-            uri = new URI("ws://"+"192.168.1.4"+":8080/BotControllerGateway/bot_gateway");
+            uri = new URI("ws://"+"192.168.43.84"+":8080/BotControllerGateway/bot_gateway");
         } catch (URISyntaxException e) {
             e.printStackTrace();
             return;

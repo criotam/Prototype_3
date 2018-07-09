@@ -843,18 +843,29 @@ public class MainActivity extends AppCompatActivity {
             double angle = Math.toDegrees(Math.atan((NodesCoordinates.nodes[dest_node][0]-NodesCoordinates.nodes[src_node][0])/
                     (NodesCoordinates.nodes[dest_node][1]-NodesCoordinates.nodes[src_node][1])));
             Log.d("angle", angle+"");
-            Util.path_command.add("turn:"+(0-angle));
-            Util.path_command.add("move:"+distance);
+
+            if(NodesCoordinates.nodes[src_node][1]>NodesCoordinates.nodes[dest_node][1] &&
+                    NodesCoordinates.nodes[src_node][0]>=NodesCoordinates.nodes[dest_node][0]){
+                Util.path_command.add("turn:"+(180-angle));
+                Util.path_command.add("move:"+distance);
+            }else if(NodesCoordinates.nodes[src_node][1]>NodesCoordinates.nodes[dest_node][1] &&
+                    NodesCoordinates.nodes[src_node][0]<=NodesCoordinates.nodes[dest_node][0]){
+                Util.path_command.add("turn:"+(-180-angle));
+                Util.path_command.add("move:"+distance);
+            }else {
+                Util.path_command.add("turn:" + (0 - angle));
+                Util.path_command.add("move:" + distance);
+            }
         }
 
         public void move_fork_lift(double distance, double angle){
 
             //TODO:replace current coordinate with source coordinate
-            //Util.x_current_coordinate = Util.x_current_coordinate - (distance*Math.sin(Math.toRadians(angle)))/100.0;
-            //Util.y_current_coordinate = Util.y_current_coordinate + (distance*Math.cos(Math.toRadians(angle)))/100.0;
+            Util.x_current_coordinate = Util.x_current_coordinate - (distance*Math.sin(Math.toRadians(angle)))/100.0;
+            Util.y_current_coordinate = Util.y_current_coordinate + (distance*Math.cos(Math.toRadians(angle)))/100.0;
 
-            Util.x_current_coordinate = NodesCoordinates.node1[0] - (distance*Math.sin(Math.toRadians(angle)))/100.0;
-            Util.y_current_coordinate = NodesCoordinates.node1[1] + (distance*Math.cos(Math.toRadians(angle)))/100.0;
+            //Util.x_current_coordinate = NodesCoordinates.node1[0] - (distance*Math.sin(Math.toRadians(angle)))/100.0;
+            //Util.y_current_coordinate = NodesCoordinates.node1[1] + (distance*Math.cos(Math.toRadians(angle)))/100.0;
 
             getCurrentCoordinates();
 
