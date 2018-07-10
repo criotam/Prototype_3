@@ -842,6 +842,7 @@ public class MainActivity extends AppCompatActivity {
 
             double angle = Math.toDegrees(Math.atan((NodesCoordinates.nodes[dest_node][0]-NodesCoordinates.nodes[src_node][0])/
                     (NodesCoordinates.nodes[dest_node][1]-NodesCoordinates.nodes[src_node][1])));
+
             Log.d("angle", angle+"");
 
             if(NodesCoordinates.nodes[src_node][1]>NodesCoordinates.nodes[dest_node][1] &&
