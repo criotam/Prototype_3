@@ -36,7 +36,7 @@ public class Websockets {
 
         URI uri;
         try {
-            uri = new URI("ws://"+"192.168.43.84"+":8080/BotControllerGateway/bot_gateway");
+            uri = new URI("ws://"+"192.168.43.231"+":8080/BotControllerGateway/bot_gateway");
         } catch (URISyntaxException e) {
             e.printStackTrace();
             return;
@@ -45,7 +45,7 @@ public class Websockets {
         mWebSocketClient = new WebSocketClient(uri, new Draft_17()) {
             @Override
             public void onOpen(ServerHandshake serverHandshake) {
-                //Toast.makeText(context, "Connected",Toast.LENGTH_LONG).show();
+                //Toast.makeText(context, "Connected",Toast.L5ENGTH_LONG).show();
                 Log.d("Websocket", "Opened");
                 mWebSocketClient.send("admin");
                 callback.onOpen();

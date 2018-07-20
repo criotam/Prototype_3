@@ -417,8 +417,13 @@ public class MainActivity extends AppCompatActivity {
             //detector.onTouchEvent(event);
             final int action = MotionEventCompat.getActionMasked(event);
 
+            Log.d("MainActivity","Motionevent");
+
             switch (action) {
                 case MotionEvent.ACTION_DOWN: {
+
+                    Log.d("MainActivity","ACION DOWN");
+
                     final int pointerIndex = MotionEventCompat.getActionIndex(event);
                     final float x = MotionEventCompat.getX(event, pointerIndex);
                     final float y = MotionEventCompat.getY(event, pointerIndex);
@@ -434,6 +439,9 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 case MotionEvent.ACTION_MOVE: {
+
+                    Log.d("MainActivity","ACION MOVE");
+
                     // Find the index of the active pointer and fetch its position
                     final int pointerIndex =
                             MotionEventCompat.findPointerIndex(event, mActivePointerId);
@@ -441,7 +449,7 @@ public class MainActivity extends AppCompatActivity {
                     final float x = MotionEventCompat.getX(event, pointerIndex);
                     final float y = MotionEventCompat.getY(event, pointerIndex);
 
-                    flag = false;
+                    //flag = false;
 
                     // Only move if the ScaleGestureDetector isn't processing a gesture.
                     /*
@@ -463,6 +471,8 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 case MotionEvent.ACTION_UP: {
+
+                    Log.d("MainActivity","ACION UP");
 
                     if(flag){
 
@@ -728,7 +738,7 @@ public class MainActivity extends AppCompatActivity {
                 float start_x = 0, start_y = 0, end_x = 0, end_y = 0;
                 Paint _paint = new Paint();
                 _paint.setColor(Color.GREEN);
-                _paint.setStrokeWidth(2);
+                _paint.setStrokeWidth(5);
 
                 Util.path_command.clear();
 
@@ -757,6 +767,10 @@ public class MainActivity extends AppCompatActivity {
 
                             Log.d("points", start_x+":"+start_y+":"+end_x+":"+end_y);
                             canvas.drawLine(start_x, start_y, end_x, end_y, _paint);
+
+                             if(i!=0){
+                                drawNodes(canvas, start_x, start_y, (float) getAngle(start_x, start_y, end_x, end_y));
+                            }
                         }
 
                         //create_path_command();
@@ -764,6 +778,12 @@ public class MainActivity extends AppCompatActivity {
                         canvas.drawLine(end_x, end_y,
                                 (float)Util.x_destination_screen,
                                 (float)Util.y_destination_screen, _paint);
+
+                        //drawNodes(canvas, end_x, end_y, (float) getAngle(end_x, end_y, Util.x_destination_screen,
+                          //      Util.y_destination_screen));
+
+                        //TODO
+                        drawDestinationPointer(canvas);
                     }
                 }
 
@@ -777,6 +797,80 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+        public void drawDestinationPointer(Canvas canvas){
+
+            Matrix matrix = new Matrix();
+
+            Bitmap srcBitmap = BitmapFactory.decodeResource(
+                    MainActivity.this.getResources(),
+                    R.drawable.ic_action_destination
+            );
+
+            //matrix.postScale((float)0.25,(float)0.2);
+
+            Bitmap bitmap = Bitmap.createBitmap(srcBitmap, 0, 0, srcBitmap.getWidth(),
+                    srcBitmap.getHeight(), matrix, true);
+
+            matrix.setRotate(
+                    0, // degrees
+                    bitmap.getWidth() / 2, // px
+                    bitmap.getHeight() / 2 // py
+            );
+
+            matrix.postTranslate(
+                    (int)Util.x_destination_screen - bitmap.getWidth() / 2,
+                    (int)Util.y_destination_screen - bitmap.getHeight() + 15
+            );
+
+            Paint paint1 = new Paint();
+            paint1.setAntiAlias(true);
+            paint1.setDither(true);
+            paint1.setFilterBitmap(true);
+
+            canvas.drawBitmap(
+                    bitmap, // Bitmap
+                    matrix, // Matrix
+                    paint // Paint
+            );
+        }
+
+        public void drawNodes(Canvas canvas, double x_screen, double y_screen, float rotation){
+
+            Matrix matrix = new Matrix();
+
+            Bitmap srcBitmap = BitmapFactory.decodeResource(
+                    MainActivity.this.getResources(),
+                    R.drawable.ic_action_navigation
+            );
+
+            matrix.postScale((float)0.5,(float)0.5);
+
+            Bitmap bitmap = Bitmap.createBitmap(srcBitmap, 0, 0, srcBitmap.getWidth(),
+                    srcBitmap.getHeight(), matrix, true);
+
+            matrix.setRotate(
+                    rotation, // degrees
+                    bitmap.getWidth() / 2, // px
+                    bitmap.getHeight() / 2 // py
+            );
+
+            matrix.postTranslate(
+                    (int)x_screen - bitmap.getWidth() / 2,
+                    (int)y_screen - bitmap.getHeight() / 2
+            );
+
+            Paint paint1 = new Paint();
+            paint1.setAntiAlias(true);
+            paint1.setDither(true);
+            paint1.setFilterBitmap(true);
+
+            canvas.drawBitmap(
+                    bitmap, // Bitmap
+                    matrix, // Matrix
+                    paint // Paint
+            );
+
+        }
 
         public void getPath(int index){
 
@@ -857,6 +951,26 @@ public class MainActivity extends AppCompatActivity {
                 Util.path_command.add("turn:" + (0 - angle));
                 Util.path_command.add("move:" + distance);
             }
+        }
+
+        public double getAngle(double x_src, double y_src, double x_dest, double y_dest){
+
+            double angle = Math.toDegrees(Math.atan((x_dest-x_src)/
+                    (y_dest-y_src)));
+
+            Log.d("angle", angle+"");
+
+            if(y_src > y_dest &&
+                    x_src >= x_dest){
+                angle = 180 - angle;
+            }else if(y_src > y_dest &&
+                    x_src <= x_dest){
+                angle = -180 - angle;
+            }else {
+                angle = 0 - angle;
+            }
+
+            return angle + 180;
         }
 
         public void move_fork_lift(double distance, double angle){
