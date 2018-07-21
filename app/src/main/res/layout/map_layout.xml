@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_marginTop="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end|center_vertical"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/ip_box"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="65dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:background="@drawable/text_box_background"
+            android:padding="5dp"
+            android:layout_marginRight="5dp"
+            android:drawableRight="@drawable/ic_action_disconnected"
+            android:hint="192.168.1.2"/>
+
+        <ImageView
+            android:id="@+id/connect"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_margin="5dp"
+            android:tint="@android:color/holo_green_dark"
+            android:src="@drawable/ic_action_connect" />
+
+        <ImageView
+            android:id="@+id/refresh"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_margin="5dp"
+            android:tint="@android:color/holo_green_dark"
+            android:src="@drawable/ic_action_refresh" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <sample.criotam.avinash.indoormap.CustomView
+            android:id="@+id/map_view"
+            class="sample.criotam.avinash.indoormap.MainActivity$CustomView"
+            android:layout_width="300dp"
+            android:layout_height="520dp"
+            android:layout_marginTop="0dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

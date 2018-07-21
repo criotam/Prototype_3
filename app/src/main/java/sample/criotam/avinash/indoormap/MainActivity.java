@@ -29,6 +29,8 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +53,11 @@ public class MainActivity extends AppCompatActivity {
     WifiManager wifi;
     WifiScanReceiver wifiReceiver;
     private TextView resultset;
+
+    private View custom_view;
+    private EditText ip_box;
+    private ImageView connect;
+    private ImageView refresh;
 
     private long split_time = 0;
 
@@ -127,7 +134,26 @@ public class MainActivity extends AppCompatActivity {
 
 */
 
-        setContentView(new CustomView(this));
+        setContentView(R.layout.map_layout);
+
+        custom_view = (View) findViewById(R.id.map_view);
+        ((ImageView)findViewById(R.id.refresh)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        ((ImageView)findViewById(R.id.connect)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        ip_box = (EditText) findViewById(R.id.ip_box);
+        //custom_view
+        //setContentView(new CustomView(this));
     }
 
     protected void onPause() {
@@ -779,8 +805,8 @@ public class MainActivity extends AppCompatActivity {
                                 (float)Util.x_destination_screen,
                                 (float)Util.y_destination_screen, _paint);
 
-                        //drawNodes(canvas, end_x, end_y, (float) getAngle(end_x, end_y, Util.x_destination_screen,
-                          //      Util.y_destination_screen));
+                        drawNodes(canvas, end_x, end_y, (float) getAngle(end_x, end_y, Util.x_destination_screen,
+                                Util.y_destination_screen));
 
                         //TODO
                         drawDestinationPointer(canvas);
@@ -1079,6 +1105,11 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if(coordinate_x > 2.6 && coordinate_x < 4.608 && coordinate_y > 2.278 && coordinate_y < 3.51){
+                Toast.makeText(MainActivity.this, "Can't move to this area", Toast.LENGTH_SHORT).show();
+                return false;
+            }
+
+            if(coordinate_x > 4.6 || coordinate_y < 0 ){
                 Toast.makeText(MainActivity.this, "Can't move to this area", Toast.LENGTH_SHORT).show();
                 return false;
             }
