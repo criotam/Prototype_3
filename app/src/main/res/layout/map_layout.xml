@@ -14,28 +14,33 @@
             android:id="@+id/ip_box"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="65dp"
+            android:layout_marginLeft="115dp"
             android:layout_marginTop="2dp"
             android:layout_marginBottom="2dp"
             android:background="@drawable/text_box_background"
             android:padding="5dp"
             android:layout_marginRight="5dp"
+            android:text="192.168.1.2"
             android:drawableRight="@drawable/ic_action_disconnected"
             android:hint="192.168.1.2"/>
 
-        <ImageView
+        <TextView
             android:id="@+id/connect"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="70dp"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:layout_height="32dp"
             android:layout_margin="5dp"
-            android:tint="@android:color/holo_green_dark"
-            android:src="@drawable/ic_action_connect" />
+            android:background="@drawable/button_background"
+            android:text="Connect"
+            android:textColor="@android:color/white" />
 
         <ImageView
             android:id="@+id/refresh"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_margin="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="10dp"
             android:tint="@android:color/holo_green_dark"
             android:src="@drawable/ic_action_refresh" />
 
@@ -49,7 +54,6 @@
 
         <sample.criotam.avinash.indoormap.CustomView
             android:id="@+id/map_view"
-            class="sample.criotam.avinash.indoormap.MainActivity$CustomView"
             android:layout_width="300dp"
             android:layout_height="520dp"
             android:layout_marginTop="0dp" />

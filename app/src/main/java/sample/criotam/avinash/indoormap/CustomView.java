@@ -9,6 +9,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Handler;
 import android.support.annotation.RequiresApi;
 import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
@@ -26,6 +27,18 @@ public class CustomView extends View {
 
     public Websockets websockets;
 
+    public interface ConnectionCallback{
+        public void webSocketInstance(Websockets websockets);
+        public void onOpen();
+        public void onClose();
+    }
+
+    ConnectionCallback connectionCallback;
+
+    public void getCallbacks(ConnectionCallback connectionCallback){
+        this.connectionCallback = connectionCallback;
+    }
+
     public CustomView(Context mContext, AttributeSet attrs){
         super(mContext, attrs);
 
@@ -38,11 +51,14 @@ public class CustomView extends View {
             @Override
             public void onOpen() {
                 //websockets.getWebsocketClient().send("admin");
+                connectionCallback.onOpen();
+                //MainActivity.ip_box.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_connected, 0);
             }
 
             @Override
             public void onClose() {
-
+                connectionCallback.onClose();
+                //MainActivity.ip_box.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_disconnected, 0);
             }
 
             @Override
@@ -64,7 +80,14 @@ public class CustomView extends View {
                 }
             }
         });
-        websockets.connectWebSocket();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                connectionCallback.webSocketInstance(websockets);
+                websockets.connectWebSocket();
+            }
+        },500);
 
         scaleNode();
     }

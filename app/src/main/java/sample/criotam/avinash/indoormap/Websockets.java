@@ -36,7 +36,7 @@ public class Websockets {
 
         URI uri;
         try {
-            uri = new URI("ws://"+"192.168.1.2"+":8080/BotControllerGateway/bot_gateway");
+            uri = new URI("ws://"+MainActivity.ip_box.getText().toString().trim()+":8080/BotControllerGateway/bot_gateway");
         } catch (URISyntaxException e) {
             e.printStackTrace();
             return;
@@ -49,6 +49,7 @@ public class Websockets {
                 Log.d("Websocket", "Opened");
                 mWebSocketClient.send("admin");
                 callback.onOpen();
+                //MainActivity.ip_box.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_connected, 0);
             }
 
             @Override
@@ -61,9 +62,13 @@ public class Websockets {
             @Override
             public void onClose(int i, String s, boolean b) {
                 Log.i("Websocket", "Closed " + s);
-                mWebSocketClient = null;
-                Toast.makeText(context, "DisConnected",Toast.LENGTH_LONG).show();
+                //mWebSocketClient = null;
+                //Toast.makeText(context, "DisConnected",Toast.LENGTH_LONG).show();
                 callback.onClose();
+                if(mWebSocketClient.isOpen()){
+                    callback.onOpen();
+                }
+                //MainActivity.ip_box.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_disconnected, 0);
             }
 
             @Override
@@ -72,6 +77,7 @@ public class Websockets {
                 callback.onError();
             }
         };
+
         mWebSocketClient.connect();
     }
 

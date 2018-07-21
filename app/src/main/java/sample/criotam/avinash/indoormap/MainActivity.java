@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.ColorStateList;
 import android.content.res.XmlResourceParser;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,6 +18,7 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.BottomNavigationView;
@@ -54,10 +56,12 @@ public class MainActivity extends AppCompatActivity {
     WifiScanReceiver wifiReceiver;
     private TextView resultset;
 
-    private View custom_view;
-    private EditText ip_box;
-    private ImageView connect;
-    private ImageView refresh;
+    private sample.criotam.avinash.indoormap.CustomView custom_view;
+    public static EditText ip_box;
+    public ImageView connect;
+    public ImageView refresh;
+
+    public Websockets websockets;
 
     private long split_time = 0;
 
@@ -136,24 +140,53 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.map_layout);
 
-        custom_view = (View) findViewById(R.id.map_view);
+        custom_view = (sample.criotam.avinash.indoormap.CustomView) findViewById(R.id.map_view);
         ((ImageView)findViewById(R.id.refresh)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Util.x_current_coordinate = Util.x_source_coordinate;
+                Util.y_current_coordinate = Util.y_source_coordinate;
+                NodesCoordinates.path_index = -1;
+                Util.rotation_angle = 0;
+                custom_view.invalidate();
             }
         });
 
-        ((ImageView)findViewById(R.id.connect)).setOnClickListener(new View.OnClickListener() {
+        ((TextView)findViewById(R.id.connect)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                //if(!websockets.getWebsocketClient().isOpen()) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        ip_box.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_disconnected, 0);
+                        websockets.connectWebSocket();
+                    }
+                },500);
+                //}
             }
         });
 
         ip_box = (EditText) findViewById(R.id.ip_box);
-        //custom_view
-        //setContentView(new CustomView(this));
+
+        custom_view.getCallbacks(new sample.criotam.avinash.indoormap.CustomView.ConnectionCallback() {
+            @Override
+            public void webSocketInstance(Websockets websocket) {
+                websockets = websocket;
+            }
+
+            @Override
+            public void onOpen() {
+                ip_box.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_connected, 0);
+            }
+
+            @Override
+            public void onClose() {
+                ip_box.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.ic_action_disconnected, 0);
+            }
+        });
+
+        //setContentView(new CustomView2(this));
     }
 
     protected void onPause() {
@@ -377,11 +410,11 @@ public class MainActivity extends AppCompatActivity {
         sd6 = 1.79;
     }
 
-    private class CustomView extends View {
+    private class CustomView2 extends View {
 
         public Websockets websockets;
 
-        public CustomView(Context context){
+        public CustomView2(Context context){
             super(context);
             //detector = new ScaleGestureDetector(getContext(), new ScaleListener());
 
